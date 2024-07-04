@@ -1,5 +1,17 @@
 
 <main class="main-app">
   <h1>hello, {{title}}</h1>
+  <button (click)="loginGithub()">LogIn</button>
+
+
+  @if (isLoading) {
+    <p>Loading...</p>
+  }
+  @if (serviceError) {
+    <p>Estamos presentando problemas</p>
+  }
+
+
+
   <router-outlet />
 </main>
