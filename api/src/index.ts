@@ -1,20 +1,17 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
-
+import bodyParser from 'body-parser';
+import router from './routes';
+import { FirebaseDb }  from './libs/firebase'
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.get('/generate-url', (req, res) => {
-  try {
-    res.send('Hello, TypeScript with Express!');
-  } catch (error) {
-    res.send('error')
-  }
- 
-});
+FirebaseDb.initialize()
+
+app.use(bodyParser.json())
+app.use(router)
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-// rutas protegidas con auth
-// servicio post que recibe url principal y retorna url acortada

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FirebaseService } from '../shared/libs/firebase.service';
 
 
 @Component({
@@ -13,4 +14,19 @@ export class AppComponent {
   title = 'app';
 
  
+  constructor(private firebase: FirebaseService) {}
+
+  ngOnInit() {
+    this.firebase.$userAuthState.subscribe(data => {
+      console.log(data)
+    })
+  }
+
+  async login() {
+    await this.firebase.gitHubSignIn()
+  }
+
+  logout() {
+    this.firebase.signOut()
+  }
 }
