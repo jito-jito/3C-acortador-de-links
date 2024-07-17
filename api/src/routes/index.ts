@@ -1,11 +1,19 @@
 import express from 'express'
 import urlRouter from './url.router'
+import redirectRouter from './redirect.router'
 const router = express.Router()
 
-router.use('/api/v1/url', urlRouter)
+export interface errorRequest {
+    statusCode: number,
+    message: string
+}
 
-router.use((err: any, req: any, res: any, next: any) => {
-    res.status(499).send('algo ocurrio :(')
+router.use('/api/v1/url', urlRouter)
+router.use('', redirectRouter)
+
+router.use((err: errorRequest, req: any, res: any, next: any) => {
+    res.status(err.statusCode ?? 500)
+    .send(err.message ?? 'algo ocurrio :(')
 })
 
 export default router

@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { FirebaseDb } from '../libs/firebase'
+import { errorRequest } from '../routes'
 
 export class urlService {
 
@@ -13,8 +14,12 @@ export class urlService {
 
         const linkRef = await FirebaseDb.getDocumentById("links", hashChunk)
 
-        if (linkRef.exists) {
-          throw new Error('hash already exist!');
+        if (linkRef) {
+          const error: errorRequest = {
+            statusCode: 500,
+            message: 'el enlace acortado ya existe'
+          }
+          throw error
         } 
         
         const docRef = FirebaseDb.createDocument("links", hashChunk)
@@ -31,5 +36,15 @@ export class urlService {
         throw error
       }
           
+  }
+
+  async getLink(linkHash: string): Promise<string | null> {
+    try {
+      const urlBase = await FirebaseDb.getDocumentById('links', linkHash)
+
+      return urlBase?.originalUrl ?? null
+    } catch (error) {
+      throw error
+    }
   }
 }

@@ -72,8 +72,14 @@ class firebaseDb {
 
   async getDocumentById(collectionName: string, idDoc: string) {
     const cityRef = this.db.collection(collectionName).doc(idDoc);
-    const doc = await cityRef.get();
+    const querySnapshot = await cityRef.get();
     
+    return querySnapshot.empty ? null : querySnapshot.data()
+  }
+
+  async getDocumentWithValue(collectionName: string, property: string, value: string) {
+    const doc = await this.db.collection(collectionName).where(property, '==', value).get()
+
     return doc
   }
 
@@ -90,7 +96,11 @@ class firebaseDb {
       req.user = authDecoded
       next()
     } catch (error) {
-      next(error)
+      next({
+        error,
+        statusCode: 401,
+        message: 'no autorizado'
+      })
     }
   }
 }

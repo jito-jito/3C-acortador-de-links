@@ -1,9 +1,9 @@
 import express from 'express'
-const urlRouter = express.Router()
 import { urlService } from "../services/url.service";
 import { urlSchema } from '../schemas/url.schema';
 import { AuthenticatedRequest, FirebaseDb } from '../libs/firebase';
-
+import { errorRequest } from '.';
+const urlRouter = express.Router()
 const service = new urlService()
 
 // to short a url
@@ -14,7 +14,11 @@ urlRouter.post('/shortUrl',
     const user = req.user
 
     if(!user) {
-      throw 'cant receive user data'
+      const error: errorRequest = {
+        statusCode: 500,
+        message: 'problema en obtener información del usuario'
+      }
+      throw error
     }
     
     const body = await urlSchema.validateAsync(req.body)
@@ -25,15 +29,6 @@ urlRouter.post('/shortUrl',
     next(error)
   }
 });
-
-// to make redirection
-urlRouter.get('/:shortUrl', (req, res) => {
-  try {
-    res.redirect('http://google.com', 301)
-  } catch (error) {
-    
-  }
-})
 
 // to get usr urls
 urlRouter.get('urls', (req, resp) => {
